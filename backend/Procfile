@@ -1,0 +1,1 @@
+web: uvicorn app:app --host=192.168.65.1 --port=${PORT:-5000}

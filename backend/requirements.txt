@@ -1,0 +1,20 @@
+annotated-types==0.6.0
+fastapi==0.109.0
+httpcore==1.0.2
+httpx>=0.27.0
+openai==1.42.0  # Updated to the latest compatible version
+pydantic==2.7.0
+pydantic_core==2.18.1
+requests==2.31.0
+tiktoken>=0.7
+typing_extensions==4.11.0  # Updated to 4.11.0 for compatibility
+instructor==1.2.2
+langchain==0.2.14
+langchain-core==0.2.35
+langchain_community==0.2.12
+chromadb==0.5.5
+langchain_openai==0.1.22
+beautifulsoup4==4.12.2
+lark==1.1.7
+pypdf==4.3.1
+python-multipart>0.0.9
