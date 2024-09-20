@@ -6,6 +6,7 @@ import Loading from "../../components/Loading";
 import { useLocation } from "react-router-dom";
 import { useRef } from "react";
 import PdfUploader from "../../components/PdfUploader";
+import SiteUploader from "../../components/WebsiteUploader";
 import PdfList from "../../components/PdfList";
 
 const Home = () => {
@@ -24,7 +25,7 @@ const Home = () => {
     setAllMessageList([]);
   };
 
-  const onMessageSend = () => {
+  const sendMessage = () => {
     if (apiCalling) {
       setToast({
         open: true,
@@ -70,6 +71,23 @@ const Home = () => {
       });
     setQuestion("");
   };
+  const setText = (e, append) => {
+    if(append) {
+        setQuestion(e.target.value + append)
+      return
+    }
+    setQuestion(e.target.value)
+  }
+
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter' && e.shiftKey) {
+      e.preventDefault(); // Previene el envío del formulario
+      setText(e, '\n'); // Añade un salto de línea
+    }
+    else if(e.key === 'Enter') {
+      sendMessage()
+    }
+  };
 
   useEffect(() => {
   }, []);
@@ -85,76 +103,18 @@ const Home = () => {
     <div className="flex font-inter">
       {location.pathname == "/" && (
         <div data-id="wrapper" className="flex-wrap content-between w-full m-lr-30">
-              <div
-                className="flex gap-2 group items-center cursor-pointer"
-                onClick={() => handleNewChat()}
-                onMouseEnter={() => setNewChatHovered(true)}
-                onMouseLeave={() => setNewChatHovered(false)}
-              >
-                {newChatHovered ? (
-                  <svg
-                    width={30}
-                    height={30}
-                    viewBox="0 0 30 30"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      d="M20 3.99998C19.5926 3.62528 19.0532 3.42747 18.5002 3.44997C17.9471 3.47247 17.4256 3.71343 17.05 4.11998L10.17 11L9 15L13 13.83L19.88 6.99998C20.0888 6.81332 20.2579 6.5866 20.3774 6.33329C20.4968 6.07997 20.5642 5.80524 20.5754 5.5254C20.5866 5.24556 20.5414 4.96632 20.4426 4.70427C20.3437 4.44223 20.1932 4.20272 20 3.99998V3.99998Z"
-                      stroke="black"
-                      strokeWidth={2}
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                    <path
-                      d="M12 3H4C3.73478 3 3.48043 3.10536 3.29289 3.29289C3.10536 3.48043 3 3.73478 3 4V20C3 20.2652 3.10536 20.5196 3.29289 20.7071C3.48043 20.8946 3.73478 21 4 21H20C20.2652 21 20.5196 20.8946 20.7071 20.7071C20.8946 20.5196 21 20.2652 21 20V12"
-                      stroke="black"
-                      strokeWidth={2}
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
-                ) : (
-                  <svg
-                    width={30}
-                    height={30}
-                    viewBox="0 0 30 30"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <rect width={30} height={30} rx={5} fill="white" />
-                    <path
-                      d="M20 3.99998C19.5926 3.62528 19.0532 3.42747 18.5002 3.44997C17.9471 3.47247 17.4256 3.71343 17.05 4.11998L10.17 11L9 15L13 13.83L19.88 6.99998C20.0888 6.81332 20.2579 6.5866 20.3774 6.33329C20.4968 6.07997 20.5642 5.80524 20.5754 5.5254C20.5866 5.24556 20.5414 4.96632 20.4426 4.70427C20.3437 4.44223 20.1932 4.20272 20 3.99998V3.99998Z"
-                      stroke="#A9ACB4"
-                      strokeWidth={2}
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                    <path
-                      d="M12 3H4C3.73478 3 3.48043 3.10536 3.29289 3.29289C3.10536 3.48043 3 3.73478 3 4V20C3 20.2652 3.10536 20.5196 3.29289 20.7071C3.48043 20.8946 3.73478 21 4 21H20C20.2652 21 20.5196 20.8946 20.7071 20.7071C20.8946 20.5196 21 20.2652 21 20V12"
-                      stroke="#A9ACB4"
-                      strokeWidth={2}
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
-                )}
-
-                <div className="bg-bg_sidebar-black text-white py-1 px-4 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity">
-                  New Chat
-                </div>
-              </div>
               <div className="flex font-inter">
               {location.pathname == "/" && (
                 <div data-id="wrapper" className="flex w-full">
                   {/* Left Side: PdfList and PdfUploader */}
                   <div className="w-[25%]">
-                    <PdfList />
                     <PdfUploader />
+                    <SiteUploader />
+                    <PdfList />
                   </div>
 
                   {/* Right Side: Input, Button, and Messages */}
-                  <div className="w-[75%] ml-auto">
+                  <div className="w-[75%] ml-auto p-10">
                     <div
                       data-id="messages-container"
                       ref={chatContainerRef}
@@ -181,18 +141,18 @@ const Home = () => {
 
                     {/* Input and Send Button */}
                     <div className="flex items-center gap-2 mt-4">
-                      <input
+                      <textarea
                         id="question"
                         name="question"
                         type="text"
                         autoComplete="question"
                         placeholder="Ask a question .."
-                        onChange={(e) => setQuestion(e.target.value)}
-                        onKeyDown={(event) => event.key === "Enter" && onMessageSend()}
+                        onChange={setText}
+                        onKeyDown={handleKeyDown}
                         value={question}
                         className="w-full border border-gray-300 rounded-lg p-2"
                       />
-                      <div className="cursor-pointer" onClick={onMessageSend}>
+                      <div className="cursor-pointer" onClick={sendMessage}>
                         {gptLoading ? (
                           <FaRegStopCircle size={25} />
                         ) : (

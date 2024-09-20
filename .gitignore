@@ -1,8 +1,10 @@
 /front/node_modules/
 /front/.env
+/front/package-lock.json
 /docker-compose.yaml
 /backend/chroma_db
 /backend/uploads
 backend/pdf-directory-loader-test.ipynb
 .ssh
 .ssh.pub
+

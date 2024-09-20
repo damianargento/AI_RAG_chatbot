@@ -1,47 +1,44 @@
 import React, { useState } from 'react';
 import axios from "axios";
 
-const PdfUploader = () => {
-  const [selectedFile, setSelectedFile] = useState(null);
+const SiteUploader = () => {
+  const [site, setSite] = useState(null);
 
-  const handleFileChange = (event) => {
-    const file = event.target.files[0];
-    if (file && file.type === 'application/pdf') {
-      setSelectedFile(file);
-    } else {
-      alert('Please select a valid PDF file');
-      setSelectedFile(null);
-    }
+  const handleSiteInput = (event) => {
+    const website = event.target.value;
+    console.log(website)
+      setSite(website);
   };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    if (selectedFile) {
-         const formData = new FormData();
-         formData.append('file', selectedFile);
-         
+    if (site) {
           try {
             const response = await axios.post(
-            `${import.meta.env.VITE_API_URL}upload-pdf`,
-            formData,
+            `${import.meta.env.VITE_API_URL}store_website`,
+            { site },
             {
                 headers: {
-                'Content-Type': 'multipart/form-data',
+                'Content-Type': 'application/json',
                 },
             }
         );
         console.log(response.data); // Handle success response
-        alert('File uploaded successfully');
+        alert('Site uploaded successfully');
       } catch (error) {
-        console.error('Error uploading file:', error);
-        alert('File upload failed');
+        console.error('Error uploading site:', error);
+        alert('Site upload failed');
       }
     } else {
-      alert('No file selected');
+      alert('No site selected');
     }
   };
 
   const styles = {
+  input: {
+    border: 'solid 1px #bababa',
+    borderRadius: '5px'
+  },
   container: {
     display: 'grid',
     gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
@@ -85,17 +82,15 @@ const PdfUploader = () => {
 
   return (
     <div className='m-5 p-5 ring ring-gray-100 rounded'>
-      Add new files:
+      Add a website URL:
       <form onSubmit={handleSubmit} className='flex-col'>
         <div className='flex-row'>
-          <label htmlFor='file_input' className='mr-5' style={{...styles.secondaryButton, cursor:'pointer'}}>Select PDF</label>
-        {selectedFile && <button style={styles.button} type="submit">Upload</button>}
+          {site && <button style={styles.button} type="submit">Upload</button>}
         </div>
-        <input id='file_input' type="file" style={{display:'none'}} accept="application/pdf" onChange={handleFileChange} />
-        {selectedFile && <p>Selected file: {selectedFile.name}</p>}
+        <input type="text" style={styles.input} onChange={handleSiteInput} />
       </form>
     </div>
   );
 };
 
-export default PdfUploader;
+export default SiteUploader;

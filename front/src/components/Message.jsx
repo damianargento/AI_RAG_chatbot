@@ -1,8 +1,16 @@
 import React from "react";
+import he from 'he'
+import {marked} from 'marked';
+import HTMLReactParser from 'html-react-parser';
 
 const Message = ({ data }) => {
-  const message = data?.content;
-
+  let message = data?.content;
+   if (data.role !== "user"){
+        message = message.slice(1,-1)
+      }
+  // Decodifica el mensaje
+  const decodedMessage = marked(he.decode(message));
+  
   let JsonContent
       if (data.role != "user"){
         JsonContent = JSON.parse(data.content)
@@ -19,28 +27,26 @@ const Message = ({ data }) => {
       >
         <div>
           {data.role == "user" && (
-            <div className="text-[10px] font-medium rounded-full bg-button-selected-blue w-[32px] h-[32px] flex justify-center items-center">
-              HO
+            <div className="rounded-full bg-button-selected-blue w-[32px] h-[32px] flex justify-center items-center">
             </div>
           )}
           {data.role != "user" && (
-            <div className="w-[32px] h-[32px] rounded-full bg-chat-icon-orange profile_img">
-              H1
+            <div className="rounded-full w-[32px] h-[32px] flex justify-center items-center bg-chat-icon-orange">
             </div>
           )}
         </div>
         <div className="flex flex-col font-DM_Sans text-lg">
             <span className="font-bold">
-              {data?.role == "user" ? "User" : 'assistant'}
+              {data?.role == "user" ? "User" : 'Assistant'}
             </span>
             {data.role != "user" && (
             <span className="text-justify text-chat-font leading-6 max-w-full" style={{wordBreak:"break-word"}}>
-              {message}
+             {HTMLReactParser(decodedMessage)}
             </span>
             )}
             {data.role == "user" && (
             <span className="text-justify text-chat-font leading-6 max-w-full" style={{wordBreak:"break-word"}}>
-              {message}
+             {HTMLReactParser(decodedMessage)}
             </span>
             )}
           </div>

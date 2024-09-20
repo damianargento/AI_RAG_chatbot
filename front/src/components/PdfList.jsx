@@ -34,7 +34,7 @@ const PdfList = () => {
 
   const deleteFile = async (filename) => {
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}files/${filename}`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}files/${encodeURIComponent(filename.replaceAll('/','').replaceAll(':',''))}`, {
         method: 'DELETE',
       });
       if (!response.ok) {
@@ -49,23 +49,28 @@ const PdfList = () => {
 
   return ( 
   <>
-    <div style={styles.container}>
+    <div className='m-5 p-5 ring ring-gray-100 rounded' style={styles.container}>
+      {files?.length !== 0 && <p>Uploaded Files:</p>}
       {error && <p style={styles.error}>{error}</p>}
       {files ? files?.length === 0 && !loading && !error && <p>No files uploaded yet.</p> : <span>No files uploaded yet.</span>}
       {files?.map((file) => (
         <div key={file} style={styles.tile}>
-          <p>{file}</p>
+          <p style={styles.filename}>{file}</p>
           <button style={styles.button} onClick={() => deleteFile(file)}>Delete</button>
         </div>
       ))}
     </div>
     <div className='flex-row flex'>   
-      <button class="m-5" style={styles.secondaryButton} onClick={()=> fetchFiles()}>Fetch Files</button>{loading && <Loading />}</div>
+      <button className="m-5" style={styles.secondaryButton} onClick={()=> fetchFiles()}>Fetch Files</button>{loading && <Loading />}</div>
     </>
   );
 };
 
 const styles = {
+  filename:{
+    maxWidth: '100%',
+    wordBreak: 'break-all'
+  },
   container: {
     display: 'grid',
     gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',

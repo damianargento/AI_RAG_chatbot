@@ -1,14 +1,18 @@
-from langchain_openai import OpenAI as OpenAI_lc
 from langchain_openai import OpenAIEmbeddings
-from openai import OpenAI
 import instructor
-from langchain_community.document_loaders import PyPDFDirectoryLoader
 from langchain_community.vectorstores import Chroma
 from langchain.prompts import PromptTemplate
+import os
+from groq import Groq
+from dotenv import load_dotenv
 
-client = instructor.patch(OpenAI())
-llm = OpenAI_lc()
+load_dotenv()  # Carga el archivo .env
+api_key = os.getenv("GROQ_API_KEY")
+print(f"Current working directory: {os.getcwd()}")
 
+client = instructor.patch(Groq(
+    api_key=os.environ.get("GROQ_API_KEY")
+))
 
 def get_relevant_documents(q):
 
@@ -27,14 +31,11 @@ def returnResultsFromDocument(query, documents):
     prompt = PROMPT.format(extraction_string=documents,query=query)
 
     response=client.chat.completions.create(
-        model="gpt-4",
+        model="llama-3.1-70b-versatile",
         messages=[
             {
                 "role": "system",
-                "content": """Your role is to respond to user query based on data that will be provided as relevant documents.\
-                    You will always respond using the information from the document that I am sharing but you will need to think step by step and sometimes calculate the answer based on the information provided.
-                    Don't expect the information to be literally present but more in a way that will allow you to calculate and think what the answer is.
-                    You will always use the data form the documents shared.
+                "content": """Tu papel es responder a las consultas del usuario basándote en los datos que se proporcionarán como documentos relevantes. Siempre deberás responder utilizando la información del documento que comparto, pero necesitarás pensar paso a paso y, a veces, calcular la respuesta basándote en la información proporcionada. No esperes que la información esté literalmente presente, sino de una manera que te permita calcular y pensar cuál es la respuesta. Siempre utilizarás los datos de los documentos compartidos. Siempre responderás en el mismo idioma en el que se te pregunte.
                 """,
             },
             {"role": "user", "content": prompt},
@@ -43,7 +44,10 @@ def returnResultsFromDocument(query, documents):
     return response.choices[0].message
 
 def format_text(text):
-    return text.encode('utf-8').decode()
+    text = text.replace('\n', '&#10;')
+    text = text.replace('"', '&#34;')
+
+    return text
 
 def generateResponse(query):
     return format_text(returnResultsFromDocument(query, get_relevant_documents(query)).content)
