@@ -2,6 +2,7 @@
 - Add documents and then make questions about the documents. 
 - At the moment supports websites and PDFs
 - Powered using Llama3 (via Groq) and OpenAI Embeddings (looking to change to a free embeddings model)
+- Database is ChromaDB
 
 # Setup
 - Just run npm install inside the front folder
